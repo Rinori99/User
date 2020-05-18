@@ -9,7 +9,7 @@ import server.models.User;
 import java.util.List;
 
 @Repository
-public interface PasswordHistoryRepository extends JpaRepository<PasswordHistory, User> {
+public interface PasswordHistoryRepository extends JpaRepository<PasswordHistory, String> {
 
     @Query(value = "SELECT TOP ?2 FROM password_history WHERE user_id=?1 ORDER BY date_created DESC", nativeQuery = true)
     List<PasswordHistory> findLastNPasswordsByUser(String userId, int n);

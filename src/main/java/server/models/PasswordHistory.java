@@ -1,11 +1,18 @@
 package server.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "password_history")
 public class PasswordHistory {
+
+    @Id
+    @Column(name = "id")
+    private String id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -21,7 +28,14 @@ public class PasswordHistory {
 
     }
 
-    public PasswordHistory(User userId, String password, Timestamp dateCreated) {
+//    public PasswordHistory(User userId, String password, Timestamp dateCreated) {
+//        this.userId = userId;
+//        this.password = password;
+//        this.dateCreated = dateCreated;
+//    }
+
+    public PasswordHistory(String id, User userId, String password, Timestamp dateCreated) {
+        this.id = id;
         this.userId = userId;
         this.password = password;
         this.dateCreated = dateCreated;

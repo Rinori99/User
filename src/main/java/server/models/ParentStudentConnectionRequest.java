@@ -28,14 +28,6 @@ public class ParentStudentConnectionRequest {
 
     }
 
-//    public ParentStudentConnectionRequest(String id, User parentId, String studentEmail, Date dateCreated) {
-//        this.id = id;
-//        this.parentId = parentId;
-//        this.studentEmail = studentEmail;
-//        this.dateCreated = dateCreated;
-//    }
-
-
     public ParentStudentConnectionRequest(String id, User parentId, String studentEmail, Date dateCreated, String schoolId) {
         this.id = id;
         this.parentId = parentId;

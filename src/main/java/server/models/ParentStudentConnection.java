@@ -11,10 +11,13 @@ public class ParentStudentConnection {
     @Column(name = "id")
     private String id;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent_id")
     private User parentId;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_id")
     private User studentId;
 
     @Column(name = "date_created")

@@ -66,11 +66,13 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
 
     @Override
     public PasswordRecoveryTransport saveNewPassword(String userId, String newPassword) {
+        String encryptedNewPassword = bCryptPasswordEncoder.encode(newPassword);
         List<PasswordHistory> lastThreePasswords = passwordHistoryRepository.findLastNPasswordsByUser(userId, NUMBER_OF_LAST_PASSWORDS);
-        if(lastThreePasswords.stream().map(PasswordHistory::getPassword).collect(Collectors.toList()).contains(newPassword)) {
+        if(lastThreePasswords.stream().map(PasswordHistory::getPassword).collect(Collectors.toList()).contains(encryptedNewPassword)) {
             throw new RuntimeException("This password is present in the last " + NUMBER_OF_LAST_PASSWORDS + " passwords list!");
         }
-        User user = userRepo.updateUserPassword(userId, bCryptPasswordEncoder.encode(newPassword));
+        User user = userRepo.updateUserPassword(userId, encryptedNewPassword);
+        passwordHistoryRepository.save(new PasswordHistory(UUID.randomUUID().toString(), user, encryptedNewPassword, new Timestamp(System.currentTimeMillis())));
         return new PasswordRecoveryTransport(user.getId(), user.getPassword());
     }
 

@@ -1,5 +1,6 @@
 package server.services;
 
+import org.springframework.stereotype.Service;
 import server.DTOs.ParentStudentConnectionRequestTransport;
 import server.DTOs.ParentStudentConnectionTransport;
 import server.mappers.ParentStudentConnectionMapper;
@@ -16,6 +17,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Service
 public class ParentStudentConnectionServiceImpl implements ParentStudentConnectionService {
 
     private ParentStudentConnectionRepo parentStudentConnectionRepo;

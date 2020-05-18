@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -29,7 +30,7 @@ public class User {
     @Column(name = "gender")
     private String gender;
 
-    @Column(name = "gender")
+    @Column(name = "role")
     private Role role;
 
     @Column(name = "password")
