@@ -1,9 +1,8 @@
 package server.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -30,6 +29,7 @@ public class User {
     @Column(name = "gender")
     private String gender;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
 
