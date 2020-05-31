@@ -3,6 +3,11 @@ package server.services;
 import org.springframework.stereotype.Service;
 import server.DTOs.ParentStudentConnectionRequestTransport;
 import server.DTOs.ParentStudentConnectionTransport;
+import server.PerRequestIdStorage;
+import server.integration.models.SerializableEmail;
+import server.integration.models.SerializableParentStudentConnection;
+import server.integration.producers.EmailProducer;
+import server.integration.producers.StudentParentConnectionProducer;
 import server.mappers.ParentStudentConnectionMapper;
 import server.mappers.ParentStudentConnectionRequestMapper;
 import server.models.ParentStudentConnection;
@@ -23,18 +28,25 @@ public class ParentStudentConnectionServiceImpl implements ParentStudentConnecti
     private ParentStudentConnectionRepo parentStudentConnectionRepo;
     private ParentStudentConnectionRequestRepo parentStudentConnectionRequestRepo;
     private UserRepo userRepo;
+    private StudentParentConnectionProducer connectionProducer;
+    private EmailProducer emailProducer;
 
     public ParentStudentConnectionServiceImpl(ParentStudentConnectionRepo parentStudentConnectionRepo,
                                               ParentStudentConnectionRequestRepo parentStudentConnectionRequestRepo,
-                                              UserRepo userRepo) {
+                                              UserRepo userRepo,
+                                              StudentParentConnectionProducer connectionProducer,
+                                              EmailProducer emailProducer) {
         this.parentStudentConnectionRepo = parentStudentConnectionRepo;
         this.parentStudentConnectionRequestRepo = parentStudentConnectionRequestRepo;
         this.userRepo = userRepo;
+        this.connectionProducer = connectionProducer;
+        this.emailProducer = emailProducer;
     }
 
     @Override
     public void createParentStudentConnectionRequest(ParentStudentConnectionRequestTransport parentStudentConnection) {
-        User parent = userRepo.findById(parentStudentConnection.getParentId()).orElseThrow(() ->
+        parentStudentConnection.setParentId(PerRequestIdStorage.getUserId());
+        User parent = userRepo.findById(PerRequestIdStorage.getUserId()).orElseThrow(() ->
                 new NoSuchElementException("Parent not found!"));
         ParentStudentConnectionRequest connectionRequest = new ParentStudentConnectionRequest(
                 UUID.randomUUID().toString(), parent, parentStudentConnection.getStudentEmail(),
@@ -52,7 +64,20 @@ public class ParentStudentConnectionServiceImpl implements ParentStudentConnecti
         deleteParentStudentConnectionRequest(psConnectionRequestTransport.getId());
         ParentStudentConnection psConnection = parentStudentConnectionRepo.save(
                 new ParentStudentConnection(UUID.randomUUID().toString(), parent, student, psConnectionRequestTransport.getDateCreated()));
+        executePostConnectionCreationJobs(psConnection);
         return ParentStudentConnectionMapper.psConnectionToPsConnectionTransport(psConnection);
+    }
+
+    private void executePostConnectionCreationJobs(ParentStudentConnection connection) {
+        //connectionProducer.sendParentStudentConnection(new SerializableParentStudentConnection(connection.getId(),
+                //connection.getStudentId().getId(), connection.getParentId().getId()));
+        User parent = connection.getParentId();
+        User student = connection.getStudentId();
+        String subject = "Child connection verification confirmation";
+        String content = "Dear " + parent.getFirstName() + " " + parent.getLastName() + ",\n\nYour request to connect to your child " +
+                student.getFirstName() + " " + student.getLastName() + " has been approved. Now you can track " + student.getFirstName() +
+                "'s performance at school through your account.\n\nEducation Management System developers";
+        //emailProducer.produce(new SerializableEmail(parent.getEmail(), subject, content));
     }
 
     @Override

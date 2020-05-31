@@ -9,20 +9,20 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ExchangesConfiguration {
 
-    @Value("${exchange.direct}")
-    private String directExchange;
-
-    @Value("${exchange.topic}")
-    private String topicExchange;
-
-    @Bean
-    public DirectExchange directExchange() {
-        return new DirectExchange(directExchange);
-    }
-
-    @Bean
-    public TopicExchange topicExchange() {
-        return new TopicExchange(topicExchange);
-    }
+//    @Value("${exchange.direct}")
+//    private String directExchange;
+//
+//    @Value("${exchange.topic}")
+//    private String topicExchange;
+//
+//    @Bean
+//    public DirectExchange directExchange() {
+//        return new DirectExchange(directExchange);
+//    }
+//
+//    @Bean
+//    public TopicExchange topicExchange() {
+//        return new TopicExchange(topicExchange);
+//    }
 
 }

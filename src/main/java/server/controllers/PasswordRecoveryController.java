@@ -7,7 +7,7 @@ import server.DTOs.PasswordRecoveryTransport;
 import server.services.PasswordRecoveryService;
 
 @RestController
-@RequestMapping("/password-recoveries")
+@RequestMapping("password-recoveries")
 public class PasswordRecoveryController {
 
     private PasswordRecoveryService passwordRecoveryService;
@@ -17,19 +17,19 @@ public class PasswordRecoveryController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{passwordRecoveryId}")
+    @GetMapping("{passwordRecoveryId}")
     public PasswordRecoveryLinkValidationTransport validatePasswordRecoveryLink(@PathVariable String passwordRecoveryId) {
         return passwordRecoveryService.validatePasswordRecoveryLink(passwordRecoveryId);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/")
+    @PostMapping
     public void requestPasswordRecovery(@RequestParam("email") String email) {
         passwordRecoveryService.requestPasswordRecovery(email);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/")
+    @PutMapping
     public PasswordRecoveryTransport changePassword(@RequestBody PasswordRecoveryTransport passwordRecovery) {
         return passwordRecoveryService.saveNewPassword(passwordRecovery.getUserId(), passwordRecovery.getNewPassword());
     }

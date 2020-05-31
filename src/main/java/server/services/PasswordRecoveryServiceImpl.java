@@ -4,6 +4,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import server.DTOs.PasswordRecoveryTransport;
 import server.DTOs.PasswordRecoveryLinkValidationTransport;
+import server.integration.models.SerializableEmail;
+import server.integration.producers.EmailProducer;
 import server.models.PasswordHistory;
 import server.models.PasswordRecovery;
 import server.models.User;
@@ -24,17 +26,23 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
     private static final int NUMBER_OF_LAST_PASSWORDS = 3;
 
     private UserRepo userRepo;
+    private UserService userService;
     private PasswordRecoveryRepo passwordRecoveryRepo;
     private PasswordHistoryRepository passwordHistoryRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private EmailProducer emailProducer;
 
     public PasswordRecoveryServiceImpl(UserRepo userRepo, PasswordRecoveryRepo passwordRecoveryRepo,
                                        PasswordHistoryRepository passwordHistoryRepository,
-                                       BCryptPasswordEncoder bCryptPasswordEncoder) {
+                                       BCryptPasswordEncoder bCryptPasswordEncoder,
+                                       EmailProducer emailProducer,
+                                       UserService userService) {
         this.userRepo = userRepo;
         this.passwordRecoveryRepo = passwordRecoveryRepo;
         this.passwordHistoryRepository = passwordHistoryRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.emailProducer = emailProducer;
+        this.userService = userService;
     }
 
     @Override
@@ -45,12 +53,12 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
             PasswordRecovery passwordRecovery = new PasswordRecovery(UUID.randomUUID().toString(), user,
                     new Timestamp(System.currentTimeMillis()), false);
             PasswordRecovery savedPasswordRecovery = passwordRecoveryRepo.save(passwordRecovery);
-            String recoveryLink = "http://user/password-recoveries/{recoveryId}";
+            String recoveryLink = "/auth/forgot-password/" + passwordRecovery.getId();
             emailContent = "Change password by clicking this link: " + recoveryLink;
         } else {
             emailContent = "The email is not linked to any user and password recovery cannot be done!";
         }
-        // send email
+        //emailProducer.produce(new SerializableEmail(email, "Password Recovery", emailContent));
     }
 
     @Override
@@ -58,22 +66,28 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
         PasswordRecovery passwordRecovery = passwordRecoveryRepo.findById(passwordRecoveryId).orElseThrow(() -> new NoSuchElementException("Link not found"));
         PasswordRecoveryLinkValidator validator = new PasswordRecoveryLinkValidator(passwordRecovery);
         boolean isValid = validator.isValid();
+        String validationMessage = validator.getValidationMessage();
         if(isValid) {
-            passwordRecoveryRepo.updatePasswordRecoveryLinkStatus(passwordRecoveryId, true);
+            passwordRecovery.setUsed(true);
+            passwordRecoveryRepo.save(passwordRecovery);
+            return new PasswordRecoveryLinkValidationTransport(isValid, validationMessage);
+        } else {
+            throw new RuntimeException(validationMessage);
         }
-        return new PasswordRecoveryLinkValidationTransport(isValid, validator.getValidationMessage());
     }
 
     @Override
     public PasswordRecoveryTransport saveNewPassword(String userId, String newPassword) {
         String encryptedNewPassword = bCryptPasswordEncoder.encode(newPassword);
-        List<PasswordHistory> lastThreePasswords = passwordHistoryRepository.findLastNPasswordsByUser(userId, NUMBER_OF_LAST_PASSWORDS);
+        User user = userRepo.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+        List<PasswordHistory> lastThreePasswords = passwordHistoryRepository.findLastNPasswordsByUser(user.getId(), NUMBER_OF_LAST_PASSWORDS);
         if(lastThreePasswords.stream().map(PasswordHistory::getPassword).collect(Collectors.toList()).contains(encryptedNewPassword)) {
             throw new RuntimeException("This password is present in the last " + NUMBER_OF_LAST_PASSWORDS + " passwords list!");
         }
-        User user = userRepo.updateUserPassword(userId, encryptedNewPassword);
-        passwordHistoryRepository.save(new PasswordHistory(UUID.randomUUID().toString(), user, encryptedNewPassword, new Timestamp(System.currentTimeMillis())));
-        return new PasswordRecoveryTransport(user.getId(), user.getPassword());
+        user.setPassword(encryptedNewPassword);
+        User savedUser = userRepo.save(user);
+        passwordHistoryRepository.save(new PasswordHistory(UUID.randomUUID().toString(), savedUser, encryptedNewPassword, new Timestamp(System.currentTimeMillis())));
+        return new PasswordRecoveryTransport(savedUser.getId(), savedUser.getPassword());
     }
 
 }

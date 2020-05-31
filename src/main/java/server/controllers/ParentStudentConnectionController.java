@@ -8,7 +8,7 @@ import server.services.ParentStudentConnectionService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ps-relations")
+@RequestMapping("ps-relations")
 public class ParentStudentConnectionController {
 
     private ParentStudentConnectionService parentStudentConnectionService;
@@ -17,24 +17,24 @@ public class ParentStudentConnectionController {
         this.parentStudentConnectionService = parentStudentConnectionService;
     }
 
-    @GetMapping("/requests")
+    @GetMapping("requests")
     public List<ParentStudentConnectionRequestTransport> getParentStudentConnectionRequestsBySchool(
             @RequestParam("schoolId") String schoolId) {
         return parentStudentConnectionService.getParentStudentConnectionRequestsBySchool(schoolId);
     }
 
-    @PostMapping("/requests/")
-    public void requestParentStudentConnection(@RequestBody ParentStudentConnectionRequestTransport parentStudentConnection) {
+    @PostMapping("requests")
+    public void createParentStudentConnectionRequest(@RequestBody ParentStudentConnectionRequestTransport parentStudentConnection) {
         parentStudentConnectionService.createParentStudentConnectionRequest(parentStudentConnection);
     }
 
-    @PostMapping("/connections/")
-    public ParentStudentConnectionTransport approveParentStudentConnection(
+    @PostMapping("connections")
+    public ParentStudentConnectionTransport approveParentStudentConnectionRequest(
             @RequestBody ParentStudentConnectionRequestTransport psConnectionRequestTransport) {
         return parentStudentConnectionService.createParentStudentConnection(psConnectionRequestTransport);
     }
 
-    @DeleteMapping("/requests/{psConnectionRequestId}")
+    @DeleteMapping("requests/{psConnectionRequestId}")
     public void deleteParentStudentConnectionRequest(@PathVariable String psConnectionRequestId) {
         parentStudentConnectionService.deleteParentStudentConnectionRequest(psConnectionRequestId);
     }

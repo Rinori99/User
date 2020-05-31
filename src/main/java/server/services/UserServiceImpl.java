@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     private UserProducer userProducer;
 
     public UserServiceImpl(UserRepo userRepo, ParentStudentConnectionRepo parentStudentConnectionRepo, EmailProducer emailProducer,
-                           BCryptPasswordEncoder bCryptPasswordEncoder, UserProducer userProducer) {
+                                BCryptPasswordEncoder bCryptPasswordEncoder, UserProducer userProducer) {
         this.userRepo = userRepo;
         this.parentStudentConnectionRepo = parentStudentConnectionRepo;
         this.emailProducer = emailProducer;
@@ -59,11 +59,16 @@ public class UserServiceImpl implements UserService {
         return children.stream().map(UserMapper::userToUserTransport).collect(Collectors.toList());
     }
 
+    @Override
+    public void updateUser() {
+        
+    }
+
     private void executePostUserCreationJobs(User user) {
-        emailProducer.produce(new SerializableEmail(user.getEmail(), "Welcome to Education Management System",
-                "Dear " + user.getFirstName() + ",\n\nYou have been successfully registered to the Education Management System.\nEnjoy!\n\n"+
-                "Education Management System developers"));
-        userProducer.sendNewUser(user);
+//        emailProducer.produce(new SerializableEmail(user.getEmail(), "Welcome to Education Management System",
+//                "Dear " + user.getFirstName() + ",\n\nYou have been successfully registered to the Education Management System.\nEnjoy!\n\n"+
+//                        "Education Management System developers"));
+//        userProducer.sendNewUser(user);
     }
 
 }

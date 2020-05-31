@@ -15,4 +15,6 @@ public interface UserService {
 
     List<UserTransport> getChildrenByParent(String parentId);
 
+    void updateUser();
+
 }

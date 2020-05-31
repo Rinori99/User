@@ -11,17 +11,20 @@ public final class SerializableUser implements Serializable {
     private final String firstName;
     private final String lastName;
     private final String password;
+    private final String role;
 
     public SerializableUser(@JsonProperty("id") String id,
                             @JsonProperty("email") String email,
                             @JsonProperty("firstName") String firstName,
                             @JsonProperty("lastName") String lastName,
-                            @JsonProperty("password") String password) {
+                            @JsonProperty("password") String password,
+                            @JsonProperty("role") String role) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
+        this.role = role;
     }
 
     public String getId() {
@@ -44,6 +47,10 @@ public final class SerializableUser implements Serializable {
         return password;
     }
 
+    public String getRole() {
+        return role;
+    }
+
     @Override
     public String toString() {
         return "SerializableUser{" +
@@ -52,6 +59,7 @@ public final class SerializableUser implements Serializable {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
                 '}';
     }
 
