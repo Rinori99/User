@@ -115,4 +115,12 @@ public class User {
         this.password = password;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof User) {
+            return this.getId().equals(((User)obj).getId());
+        }
+        return false;
+    }
+
 }

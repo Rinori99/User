@@ -29,6 +29,7 @@ public class UserController {
         return userService.getChildrenByParent(PerRequestIdStorage.getUserId());
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void register(@RequestBody UserRegisterTransport userRegisterTransport) {
         userService.register(userRegisterTransport);

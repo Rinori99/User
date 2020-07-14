@@ -11,7 +11,7 @@ public interface UserService {
 
     UserTransport getUserById(String id);
 
-    void register(UserRegisterTransport userRegisterTransport);
+    UserTransport register(UserRegisterTransport userRegisterTransport);
 
     List<UserTransport> getChildrenByParent(String parentId);
 

@@ -11,7 +11,6 @@ public class ParentStudentConnection {
     @Column(name = "id")
     private String id;
 
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_id")
     private User parentId;
@@ -64,6 +63,14 @@ public class ParentStudentConnection {
 
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof ParentStudentConnection) {
+            return this.getId().equals(((ParentStudentConnection)obj).getId());
+        }
+        return false;
     }
 
 }

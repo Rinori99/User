@@ -4,7 +4,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import server.DTOs.UserRegisterTransport;
 import server.DTOs.UserTransport;
-import server.integration.models.SerializableEmail;
 import server.integration.producers.EmailProducer;
 import server.integration.producers.UserProducer;
 import server.mappers.UserMapper;
@@ -17,6 +16,7 @@ import server.repositories.UserRepo;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private EmailProducer emailProducer;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private UserProducer userProducer;
+    private Supplier<UUID> uuidSupplier = UUID::randomUUID;
 
     public UserServiceImpl(UserRepo userRepo, ParentStudentConnectionRepo parentStudentConnectionRepo, EmailProducer emailProducer,
                                 BCryptPasswordEncoder bCryptPasswordEncoder, UserProducer userProducer) {
@@ -45,11 +46,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(UserRegisterTransport userRegister) {
-        User savedUser = userRepo.save(new User(UUID.randomUUID().toString(), userRegister.getFirstName(), userRegister.getLastName(),
+    public UserTransport register(UserRegisterTransport userRegister) {
+        User savedUser = userRepo.save(new User(getUUID(), userRegister.getFirstName(), userRegister.getLastName(),
                 userRegister.getEmail(), userRegister.getBirthDate(), userRegister.getGender(),
                 Role.valueOf(userRegister.getRole()), bCryptPasswordEncoder.encode(userRegister.getPassword())));
+        System.out.println(savedUser);
         executePostUserCreationJobs(savedUser);
+        return UserMapper.userToUserTransport(savedUser);
     }
 
     @Override
@@ -61,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser() {
-        
+        // update fields...
     }
 
     private void executePostUserCreationJobs(User user) {
@@ -69,6 +72,10 @@ public class UserServiceImpl implements UserService {
 //                "Dear " + user.getFirstName() + ",\n\nYou have been successfully registered to the Education Management System.\nEnjoy!\n\n"+
 //                        "Education Management System developers"));
 //        userProducer.sendNewUser(user);
+    }
+
+    public String getUUID() {
+        return uuidSupplier.get().toString();
     }
 
 }
