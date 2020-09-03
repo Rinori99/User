@@ -7,7 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import server.DTOs.UserRegisterTransport;
 import server.DTOs.UserTransport;
@@ -78,7 +77,7 @@ public class UserServiceTest {
         when(bCryptPasswordEncoder.encode("myPassword")).thenReturn("myPasswordEncoded");
         when(userRepo.findById("5211e915-c3e2-4dcb-0776-c7b900f38ab7")).thenReturn(java.util.Optional.of(mockedUser));
         when(userRepo.save(mockedUser)).thenReturn(mockedUser);
-        when(parentStudentConnectionRepo.findByParentId("26b133a6-ea05-447b-904e-4415bfa92061")).thenReturn(parentStudentConnections);
+        //when(parentStudentConnectionRepo.findByParentId("26b133a6-ea05-447b-904e-4415bfa92061")).thenReturn(parentStudentConnections);
     }
 
     @Test

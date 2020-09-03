@@ -11,7 +11,7 @@ public class ParentStudentConnectionRequest {
     @Column(name = "id")
     private String id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "parent_id")
     private User parentId;
 

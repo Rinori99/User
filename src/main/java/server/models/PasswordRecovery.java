@@ -11,7 +11,7 @@ public class PasswordRecovery {
     @Column(name = "id")
     private String id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User userId;
 

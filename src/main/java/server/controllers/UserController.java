@@ -19,9 +19,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public UserTransport getUserById() {
-        return userService.getUserById(PerRequestIdStorage.getUserId());
+    @GetMapping("/{id}")
+    public UserTransport getUserById(@PathVariable String id) {
+        return userService.getUserById(id);
     }
 
     @GetMapping("parents/children")

@@ -1,7 +1,5 @@
 package server.DTOs;
 
-import server.models.Role;
-
 import java.util.Date;
 
 public class UserTransport {

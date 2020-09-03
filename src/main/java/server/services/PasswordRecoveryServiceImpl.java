@@ -4,7 +4,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import server.DTOs.PasswordRecoveryTransport;
 import server.DTOs.PasswordRecoveryLinkValidationTransport;
-import server.integration.models.SerializableEmail;
 import server.integration.producers.EmailProducer;
 import server.models.PasswordHistory;
 import server.models.PasswordRecovery;

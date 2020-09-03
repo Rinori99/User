@@ -1,11 +1,6 @@
 package server.integration.producers;
 
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import server.integration.models.SerializableUser;
-import server.models.Role;
-import server.models.User;
 
 @Component
 public class UserProducer {

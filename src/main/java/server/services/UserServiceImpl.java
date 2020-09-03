@@ -4,6 +4,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import server.DTOs.UserRegisterTransport;
 import server.DTOs.UserTransport;
+import server.PerRequestIdStorage;
 import server.integration.producers.EmailProducer;
 import server.integration.producers.UserProducer;
 import server.mappers.UserMapper;
@@ -40,6 +41,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserTransport getUserById(String id) {
+        if (id == null) id = PerRequestIdStorage.getUserId();
         User user = userRepo.findById(id).orElseThrow(() -> new NoSuchElementException("User not found"));
         return new UserTransport(user.getId(), user.getFirstName(), user.getLastName(),
                 user.getBirthDate(), user.getGender(), user.getRole().toString());
@@ -57,7 +59,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserTransport> getChildrenByParent(String parentId) {
-        List<ParentStudentConnection> psConnections = parentStudentConnectionRepo.findByParentId(parentId);
+        User parent = userRepo.findById(parentId).orElseThrow(() -> new RuntimeException("Parent not found"));
+        List<ParentStudentConnection> psConnections = parentStudentConnectionRepo.findByParentId(parent);
         List<User> children = psConnections.stream().map(ParentStudentConnection::getStudentId).collect(Collectors.toList());
         return children.stream().map(UserMapper::userToUserTransport).collect(Collectors.toList());
     }

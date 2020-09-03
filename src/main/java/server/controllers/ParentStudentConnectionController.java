@@ -29,7 +29,7 @@ public class ParentStudentConnectionController {
     }
 
     @PostMapping("connections")
-    public ParentStudentConnectionTransport approveParentStudentConnectionRequest(
+    public ParentStudentConnectionTransport approveParentStudentConnectionRequest (
             @RequestBody ParentStudentConnectionRequestTransport psConnectionRequestTransport) {
         return parentStudentConnectionService.createParentStudentConnection(psConnectionRequestTransport);
     }

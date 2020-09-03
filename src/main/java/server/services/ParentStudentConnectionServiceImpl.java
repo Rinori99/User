@@ -4,8 +4,6 @@ import org.springframework.stereotype.Service;
 import server.DTOs.ParentStudentConnectionRequestTransport;
 import server.DTOs.ParentStudentConnectionTransport;
 import server.PerRequestIdStorage;
-import server.integration.models.SerializableEmail;
-import server.integration.models.SerializableParentStudentConnection;
 import server.integration.producers.EmailProducer;
 import server.integration.producers.StudentParentConnectionProducer;
 import server.mappers.ParentStudentConnectionMapper;
@@ -44,13 +42,13 @@ public class ParentStudentConnectionServiceImpl implements ParentStudentConnecti
     }
 
     @Override
-    public void createParentStudentConnectionRequest(ParentStudentConnectionRequestTransport parentStudentConnection) {
-        parentStudentConnection.setParentId(PerRequestIdStorage.getUserId());
+    public void createParentStudentConnectionRequest(ParentStudentConnectionRequestTransport parentStudentConnectionRequest) {
+        parentStudentConnectionRequest.setParentId(PerRequestIdStorage.getUserId());
         User parent = userRepo.findById(PerRequestIdStorage.getUserId()).orElseThrow(() ->
                 new NoSuchElementException("Parent not found!"));
         ParentStudentConnectionRequest connectionRequest = new ParentStudentConnectionRequest(
-                UUID.randomUUID().toString(), parent, parentStudentConnection.getStudentEmail(),
-                parentStudentConnection.getDateCreated(), parentStudentConnection.getSchoolId());
+                UUID.randomUUID().toString(), parent, parentStudentConnectionRequest.getStudentEmail(),
+                parentStudentConnectionRequest.getDateCreated(), parentStudentConnectionRequest.getSchoolId());
         parentStudentConnectionRequestRepo.save(connectionRequest);
     }
 
