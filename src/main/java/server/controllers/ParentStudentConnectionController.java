@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("ps-relations")
-public class ParentStudentConnectionController {
+public class ParentStudentConnectionController extends BaseController {
 
     private ParentStudentConnectionService parentStudentConnectionService;
 

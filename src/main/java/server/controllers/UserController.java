@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("users")
-public class UserController {
+public class UserController extends BaseController{
 
     private UserService userService;
 

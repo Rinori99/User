@@ -2,7 +2,7 @@ package server.DTOs;
 
 import java.sql.Date;
 
-public class ParentStudentConnectionTransport {
+public class ParentStudentConnectionTransport extends BaseTransport {
 
     private String id;
     private String parentId;

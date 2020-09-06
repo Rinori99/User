@@ -1,6 +1,6 @@
 package server.DTOs;
 
-public class PasswordRecoveryTransport {
+public class PasswordRecoveryTransport extends BaseTransport {
 
     private String userId;
     private String newPassword;

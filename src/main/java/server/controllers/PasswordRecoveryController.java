@@ -8,7 +8,7 @@ import server.services.PasswordRecoveryService;
 
 @RestController
 @RequestMapping("password-recoveries")
-public class PasswordRecoveryController {
+public class PasswordRecoveryController extends BaseController {
 
     private PasswordRecoveryService passwordRecoveryService;
 

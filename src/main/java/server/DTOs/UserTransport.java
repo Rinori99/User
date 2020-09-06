@@ -2,7 +2,7 @@ package server.DTOs;
 
 import java.util.Date;
 
-public class UserTransport {
+public class UserTransport extends BaseTransport {
 
     private String id;
     private String firstName;

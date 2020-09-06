@@ -1,6 +1,6 @@
 package server.DTOs;
 
-public class PasswordRecoveryLinkValidationTransport {
+public class PasswordRecoveryLinkValidationTransport extends BaseTransport {
 
     private boolean isValid;
     private String message;
