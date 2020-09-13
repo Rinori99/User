@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
 //        emailProducer.produce(new SerializableEmail(user.getEmail(), "Welcome to Education Management System",
 //                "Dear " + user.getFirstName() + ",\n\nYou have been successfully registered to the Education Management System.\nEnjoy!\n\n"+
 //                        "Education Management System developers"));
-//        userProducer.sendNewUser(user);
+        userProducer.sendNewUser(user);
     }
 
     public String getUUID() {

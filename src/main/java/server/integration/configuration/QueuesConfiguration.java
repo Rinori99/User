@@ -23,6 +23,13 @@ public class QueuesConfiguration {
     @Value("${queue.user.new.admin}")
     private String newAdminsQueueName;
 
+    @Value("${queue.user.new.general}")
+    private String newGeneralUserQueueName;
+
+    @Value("${queue.connection.student.parent}")
+    private String newStudentParentConnectionQueueName;
+
+
     @Bean(name = "emailQueue")
     public Queue emailQueue() {
         return new Queue(emailQueueName);
@@ -46,6 +53,16 @@ public class QueuesConfiguration {
     @Bean(name = "newAdminsQueue")
     public Queue newAdminsQueue() {
         return new Queue(newAdminsQueueName);
+    }
+
+    @Bean(name = "newGeneralUserQueue")
+    public Queue newGeneralUserQueue() {
+        return new Queue(newGeneralUserQueueName);
+    }
+
+    @Bean(name = "newStudentParentConnectionQueue")
+    public Queue newStudentParentConnectionQueue() {
+        return new Queue(newStudentParentConnectionQueueName);
     }
 
 }

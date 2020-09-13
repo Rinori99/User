@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import server.DTOs.ParentStudentConnectionRequestTransport;
 import server.DTOs.ParentStudentConnectionTransport;
 import server.PerRequestIdStorage;
+import server.integration.models.SerializableParentStudentConnection;
 import server.integration.producers.EmailProducer;
 import server.integration.producers.StudentParentConnectionProducer;
 import server.mappers.ParentStudentConnectionMapper;
@@ -15,6 +16,7 @@ import server.repositories.ParentStudentConnectionRepo;
 import server.repositories.ParentStudentConnectionRequestRepo;
 import server.repositories.UserRepo;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -53,22 +55,23 @@ public class ParentStudentConnectionServiceImpl implements ParentStudentConnecti
     }
 
     @Override
-    public ParentStudentConnectionTransport createParentStudentConnection(ParentStudentConnectionRequestTransport psConnectionRequestTransport) {
-        User parent = userRepo.findById(psConnectionRequestTransport.getParentId()).orElseThrow(() -> new NoSuchElementException("Parent not found"));
-        User student = userRepo.findByEmail(psConnectionRequestTransport.getStudentEmail());
+    public ParentStudentConnectionTransport createParentStudentConnection(String requestId) {
+        ParentStudentConnectionRequest psConnectionRequest = parentStudentConnectionRequestRepo.findById(requestId).orElseThrow(() -> new RuntimeException("Connection request not found!"));
+        User parent = userRepo.findById(psConnectionRequest.getParentId().getId()).orElseThrow(() -> new NoSuchElementException("Parent not found"));
+        User student = userRepo.findByEmail(psConnectionRequest.getStudentEmail());
         if(student == null) {
             throw new NoSuchElementException("No student with the given email could be found!");
         }
-        deleteParentStudentConnectionRequest(psConnectionRequestTransport.getId());
+        deleteParentStudentConnectionRequest(psConnectionRequest.getId());
         ParentStudentConnection psConnection = parentStudentConnectionRepo.save(
-                new ParentStudentConnection(UUID.randomUUID().toString(), parent, student, psConnectionRequestTransport.getDateCreated()));
+                new ParentStudentConnection(UUID.randomUUID().toString(), parent, student, new Date(System.currentTimeMillis())));
         executePostConnectionCreationJobs(psConnection);
         return ParentStudentConnectionMapper.psConnectionToPsConnectionTransport(psConnection);
     }
 
     private void executePostConnectionCreationJobs(ParentStudentConnection connection) {
-        //connectionProducer.sendParentStudentConnection(new SerializableParentStudentConnection(connection.getId(),
-                //connection.getStudentId().getId(), connection.getParentId().getId()));
+        connectionProducer.sendParentStudentConnection(new SerializableParentStudentConnection(connection.getId(),
+                connection.getStudentId().getId(), connection.getParentId().getId()));
         User parent = connection.getParentId();
         User student = connection.getStudentId();
         String subject = "Child connection verification confirmation";
