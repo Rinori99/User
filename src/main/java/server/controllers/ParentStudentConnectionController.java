@@ -30,8 +30,8 @@ public class ParentStudentConnectionController extends BaseController {
 
     @PostMapping("connections")
     public ParentStudentConnectionTransport approveParentStudentConnectionRequest (
-            @RequestBody ParentStudentConnectionRequestTransport psConnectionRequestTransport) {
-        return parentStudentConnectionService.createParentStudentConnection(psConnectionRequestTransport);
+            @RequestParam("requestId") String requestId) {
+        return parentStudentConnectionService.createParentStudentConnection(requestId);
     }
 
     @DeleteMapping("requests/{psConnectionRequestId}")

@@ -9,7 +9,7 @@ public interface ParentStudentConnectionService {
 
     void createParentStudentConnectionRequest(ParentStudentConnectionRequestTransport parentStudentConnection);
 
-    ParentStudentConnectionTransport createParentStudentConnection(ParentStudentConnectionRequestTransport psConnectionRequestTransport);
+    ParentStudentConnectionTransport createParentStudentConnection(String requestId);
 
     void deleteParentStudentConnectionRequest(String psConnectionRequestId);
 
